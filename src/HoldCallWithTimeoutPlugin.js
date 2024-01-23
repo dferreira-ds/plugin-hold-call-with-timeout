@@ -111,7 +111,7 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
             console.error(e)
           };
 
-          // unhold agent after X seconds
+          // unhold agent and customer after X seconds
           setTimeout(async () => {
             try {
               console.log("DEBUG: hitting second function")
