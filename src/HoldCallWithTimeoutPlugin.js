@@ -17,8 +17,8 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
   async init(flex, manager) {
 
     const isTaskActive = (task) => {
-      const reservationSid = task.sid;
-      const taskStatus = task.status;
+      const reservationSid = task?.sid;
+      const taskStatus = task?.status;
       if (taskStatus === 'canceled') {
         return false;
       } else {
