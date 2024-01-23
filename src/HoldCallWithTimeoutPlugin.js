@@ -103,7 +103,7 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
             },
           };
 
-          // Make the network request using the Fetch API
+          // Make the network request using the Fetch API to hold the call
           try {
             console.log("DEBUG: hitting first function")
             await fetch('https://serverless-function/holdCall', options)
@@ -111,7 +111,7 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
             console.error(e)
           };
 
-          // unhold agent
+          // unhold agent after X seconds
           setTimeout(async () => {
             try {
               console.log("DEBUG: hitting second function")
