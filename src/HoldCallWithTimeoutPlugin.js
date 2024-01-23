@@ -106,7 +106,7 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
           // Make the network request using the Fetch API
           try {
             console.log("DEBUG: hitting first function")
-            await fetch('https://flex-plugins-3847.twil.io/holdCall', options)
+            await fetch('https://serverless-function/holdCall', options)
           } catch (e) {
             console.error(e)
           };
@@ -115,7 +115,7 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
           setTimeout(async () => {
             try {
               console.log("DEBUG: hitting second function")
-              await fetch('https://flex-plugins-3847.twil.io/unholdCall', options)
+              await fetch('https://serverless-function/unholdCall', options)
             } catch (e) {
               console.error(e);
             };
