@@ -15,11 +15,8 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
    * @param flex { typeof import('@twilio/flex-ui') }
    */
   async init(flex, manager) {
-    // const options = { sortOrder: -1 };
-    // flex.AgentDesktopView.Panel1.Content.add(<CustomTaskList key="PlayAudioAgentAcceptPlugin-component" />, options);
 
     const isTaskActive = (task) => {
-      //const { sid: reservationSid, taskStatus } = task;
       const reservationSid = task.sid;
       const taskStatus = task.status;
       if (taskStatus === 'canceled') {
@@ -36,9 +33,9 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
         // until the called party answers. Need to allow enough time for that to happen.
         const maxWaitTimeMs = 60000;
         let waitForConferenceInterval = setInterval(async () => {
-          //const conference = task?.conference;
+
           const conference = task?.task?.attributes?.conference?.sid;
-          //console.log("DEBUG CONFERENCE", task);
+
           console.log("DEBUG CONFERENCE", conference);
 
           if (!isTaskActive(task)) {
@@ -49,25 +46,14 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
           if (conference === undefined) {
             return;
           }
-          //const { participants } = conference;
+
           const participants = task?.task?.attributes?.conference?.participants;
-  
-          //if (Array.isArray(participants) && participants.length < 2) {
-          //  return;
-          //}
 
           if (participants.length < 2) {
             return;
           };
 
-          //const worker = participants.find(
-          //  (p) => p.participantType === "worker"
-          //);
           const worker = participants?.worker;
-
-          //const customer = participants.find(
-          //  (p) => p.participantType === "customer"
-          //);
           const customer = participants?.customer;
 
           if (!worker || !customer) {
@@ -97,40 +83,24 @@ export default class HoldCallWithTimeoutPlugin extends FlexPlugin {
           }
         }, maxWaitTimeMs);
       });
-
-    //manager.workerClient.on("reservationCreated", reservation => {
-    //  reservation.on("accepted", () => {
-    //    console.log("DEBUG RESERVATION ACCEPTED", reservation);
-    //  });
-    //});
-
-    //flex.Actions.addListener("afterAcceptTask", async (payload) => {
     
       manager.workerClient.on("reservationCreated", (reservation) => {
-        console.log('DEBUG RESERVATION CREATED', reservation);
         reservation.on("accepted", async () => {
-          console.log("DEBUG: AFTER ACCEPT TASK");
-          //let participants = await waitForConferenceParticipants(payload.task)
-          let participants = await waitForConferenceParticipants(reservation)
-
-          console.log("DEBUG: particpants", participants)
+          
+          let participants = await waitForConferenceParticipants(reservation);
 
           const body = {
-            //customerCallSid: participants.customer.callSid,
-            //workerCallSid: participants.worker.callSid,
-            //confSid: participants.customer.mediaProperties.conferenceSid,
-            //Token: manager.store.getState().flex.session.ssoTokenPayload.token
             customerCallSid: reservation?.task?.attributes?.conference?.participants?.customer,
             workerCallSid: reservation?.task?.attributes?.conference?.participants?.worker,
             confSid: reservation?.task?.attributes?.conference?.sid,
-          }
+          };
 
           const options = {
             method: 'POST',
             body: new URLSearchParams(body),
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            }
+            },
           };
 
           // Make the network request using the Fetch API
